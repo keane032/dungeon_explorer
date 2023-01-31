@@ -70,13 +70,62 @@ class Menu extends StatelessWidget {
   }
 }
 
-class Game extends StatelessWidget {
+class Game extends StatefulWidget {
   const Game({Key? key}) : super(key: key);
+
+  @override
+  State<Game> createState() => _GameState();
+}
+
+class _GameState extends State<Game> implements GameListener {
+  bool showModal = false;
+
+  Future<void> showMyDialog(context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'congratulations',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontFamily: '8Bits', fontSize: 15),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                // Text(
+                //   'congratulations',
+                //   textAlign: TextAlign.center,
+                //   style: TextStyle(fontFamily: '8Bits', fontSize: 15),
+                // )
+              ],
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Next Level',
+                style: TextStyle(fontFamily: '8Bits'),
+              ),
+              onPressed: (() => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Game()),
+                  )),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BonfireTiledWidget(
+      gameController: GameController()..addListener(this),
       joystick: Joystick(directional: JoystickDirectional(), actions: [
-        JoystickAction(actionId: 1, margin: EdgeInsets.all(40), size: 70)
+        JoystickAction(actionId: 1, margin: const EdgeInsets.all(40), size: 70)
       ]),
       map: TiledWorldMap('city/map.json', objectsBuilder: {
         'bubble': ((properties) =>
@@ -90,4 +139,17 @@ class Game extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  void changeCountLiveEnemies(int count) {
+    if (count == 0 && !showModal) {
+      showMyDialog(context);
+      setState(() {
+        showModal = true;
+      });
+    }
+  }
+
+  @override
+  void updateGame() {}
 }
