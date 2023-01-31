@@ -71,7 +71,8 @@ class Menu extends StatelessWidget {
 }
 
 class Game extends StatefulWidget {
-  const Game({Key? key}) : super(key: key);
+  final int stage;
+  const Game({Key? key, this.stage = 1}) : super(key: key);
 
   @override
   State<Game> createState() => _GameState();
@@ -79,6 +80,38 @@ class Game extends StatefulWidget {
 
 class _GameState extends State<Game> implements GameListener {
   bool showModal = false;
+
+  List<SimpleEnemy> enimies = [];
+
+  static _getTileSiPosition(int x, int y) {
+    return Vector2(x * 16, y * 16);
+  }
+
+  @override
+  void initState() {
+    switch (widget.stage) {
+      case 1:
+        enimies.addAll([
+          Bubble(position: _getTileSiPosition(7, 7), size: Vector2(16, 16)),
+        ]);
+        break;
+      case 2:
+        enimies.addAll([
+          Bubble(position: _getTileSiPosition(7, 2), size: Vector2(16, 16)),
+          Bubble(position: _getTileSiPosition(7, 7), size: Vector2(16, 16)),
+        ]);
+        break;
+      default:
+        enimies.addAll([
+          Bubble(position: _getTileSiPosition(7, 2), size: Vector2(16, 16)),
+          Bubble(position: _getTileSiPosition(2, 8), size: Vector2(16, 16)),
+          Bubble(position: _getTileSiPosition(12, 11), size: Vector2(16, 16)),
+          Bubble(position: _getTileSiPosition(18, 18), size: Vector2(16, 16)),
+        ]);
+        break;
+    }
+    super.initState();
+  }
 
   Future<void> showMyDialog(context) async {
     return showDialog<void>(
@@ -91,17 +124,6 @@ class _GameState extends State<Game> implements GameListener {
             textAlign: TextAlign.center,
             style: TextStyle(fontFamily: '8Bits', fontSize: 15),
           ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                // Text(
-                //   'congratulations',
-                //   textAlign: TextAlign.center,
-                //   style: TextStyle(fontFamily: '8Bits', fontSize: 15),
-                // )
-              ],
-            ),
-          ),
           actionsAlignment: MainAxisAlignment.center,
           actions: <Widget>[
             TextButton(
@@ -111,7 +133,8 @@ class _GameState extends State<Game> implements GameListener {
               ),
               onPressed: (() => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Game()),
+                    MaterialPageRoute(
+                        builder: (context) => Game(stage: widget.stage + 1)),
                   )),
             ),
           ],
@@ -124,15 +147,18 @@ class _GameState extends State<Game> implements GameListener {
   Widget build(BuildContext context) {
     return BonfireTiledWidget(
       gameController: GameController()..addListener(this),
-      joystick: Joystick(directional: JoystickDirectional(), actions: [
-        JoystickAction(actionId: 1, margin: const EdgeInsets.all(40), size: 70)
-      ]),
-      map: TiledWorldMap('city/map.json', objectsBuilder: {
-        'bubble': ((properties) =>
-            Bubble(position: properties.position, size: properties.size))
-      }),
+      components: [...enimies],
+      joystick: Joystick(
+          directional: JoystickDirectional(),
+          keyboardConfig: KeyboardConfig(
+              keyboardDirectionalType: KeyboardDirectionalType.wasdAndArrows),
+          actions: [
+            JoystickAction(
+                actionId: 1, margin: const EdgeInsets.all(40), size: 70)
+          ]),
+      map: TiledWorldMap('city/map.json'),
       player:
-          Explorer(position: Vector2(11 * 16, 11 * 16), size: Vector2(16, 16)),
+          Explorer(position: _getTileSiPosition(15, 4), size: Vector2(16, 16)),
       cameraConfig: CameraConfig(
         moveOnlyMapArea: true,
         zoom: 2.5,
