@@ -2,7 +2,7 @@
 
 An example of a game made with flutter bonfire
 
-- 🔎[Play](https://keane032.github.io/dungeon_explorer/docs/#/)
+- 🎮 [Start Play](https://keane032.github.io/dungeon_explorer/docs/#/)
 
 <br/>
 <p align="center">
