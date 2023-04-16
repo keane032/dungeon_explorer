@@ -2,7 +2,7 @@ import 'package:bonfire/bonfire.dart';
 import 'package:dungeon_explorer/bubble_sprint_sheet.dart';
 import 'package:flutter/material.dart';
 
-class Bubble extends SimpleEnemy with ObjectCollision {
+class Bubble extends SimpleEnemy with ObjectCollision, AutomaticRandomMovement {
   Bubble({required Vector2 position, required Vector2 size})
       : super(
             position: position,
@@ -20,7 +20,14 @@ class Bubble extends SimpleEnemy with ObjectCollision {
   @override
   void update(double dt) {
     seeAndMoveToPlayer(
-        closePlayer: (player) {}, radiusVision: 16 * 2, margin: 4);
+        closePlayer: (player) {
+          // simpleAttackMelee(damage: 10000, size: Vector2(16, 16));
+        },
+        notObserved: () {
+          runRandomMovement(dt);
+        },
+        radiusVision: 16 * 2,
+        margin: 4);
     super.update(dt);
   }
 

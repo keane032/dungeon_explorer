@@ -161,7 +161,7 @@ class _GameState extends State<Game> implements GameListener {
           Explorer(position: _getTileSiPosition(15, 4), size: Vector2(16, 16)),
       cameraConfig: CameraConfig(
         moveOnlyMapArea: true,
-        zoom: 2.5,
+        zoom: 4.5,
       ),
     );
   }
