@@ -2,6 +2,8 @@
 
 An example of a game made with flutter bonfire
 
+- 🎮 [Start Play](https://keane032.github.io/dungeon_explorer/docs/#/)
+
 <br/>
 <p align="center">
     <img width='40%' src='https://user-images.githubusercontent.com/16032852/215610783-253c79fa-d048-4179-a8e3-ba162ea8aa77.jpeg' />
